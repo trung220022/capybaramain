@@ -12,6 +12,7 @@ public class PlayerController : MonoBehaviour
 
     void Start()
     {
+        Application.targetFrameRate = 60;  // Đặt tốc độ khung hình mục tiêu
         rb = GetComponent<Rigidbody2D>();
         specialGameObject.SetActive(false); // Đảm bảo GameObject này ẩn ban đầu
     }
