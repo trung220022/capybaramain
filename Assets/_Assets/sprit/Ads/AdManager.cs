@@ -1,68 +1,101 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Advertisements;
+using System.Collections;
+using System;
 
 public class AdManager : MonoBehaviour, IUnityAdsLoadListener, IUnityAdsShowListener
 {
-    [SerializeField] Button[] adButtons; // Mảng chứa các nút quảng cáo
+    [SerializeField] Button[] adButtons;
+    [SerializeField] Button rewardedAdButton; // Nút để xem quảng cáo thưởng
     [SerializeField] string _androidRewardedAdUnitId = "Rewarded_Android";
     [SerializeField] string _iOSRewardedAdUnitId = "Rewarded_iOS";
     [SerializeField] string _androidInterstitialAdUnitId = "Interstitial_Android";
     [SerializeField] string _iOSInterstitialAdUnitId = "Interstitial_iOS";
-    private string _adUnitId;
+    [SerializeField] string _bannerAdUnitId = "Banner_Ad_Unit_ID";
+    private string _currentAdUnitId;
+
+    private int rewardAmount = 50; // Số coin thưởng mỗi lần xem quảng cáo
+    private TimeSpan cooldownTime = TimeSpan.FromMinutes(30); // Thời gian chờ 30 phút
+    private const string lastAdWatchedKey = "LastAdWatchedTime"; // Khóa lưu thời gian xem quảng cáo cuối cùng
+    private const string adRewardClaimedKey = "AdRewardClaimed"; // Khóa lưu trạng thái nhận coin từ quảng cáo
+    private DateTime nextAvailableRewardTime; // Thời gian có thể xem quảng cáo tiếp theo
 
     void Awake()
     {
-        // Gán sự kiện cho các nút
         foreach (Button button in adButtons)
         {
             button.onClick.AddListener(() => ShowAd(button));
         }
 
-        // Lấy ID quảng cáo cho nền tảng hiện tại
+        rewardedAdButton.onClick.AddListener(ShowRewardedAd); // Gán sự kiện cho nút quảng cáo thưởng
+
 #if UNITY_IOS
-            _adUnitId = _iOSRewardedAdUnitId; // Hoặc Interstitial tùy thuộc vào nút
+        _currentAdUnitId = _iOSRewardedAdUnitId;
 #elif UNITY_ANDROID
-        _adUnitId = _androidRewardedAdUnitId; // Hoặc Interstitial tùy thuộc vào nút
+        _currentAdUnitId = _androidRewardedAdUnitId;
 #endif
 
-        // Bỏ qua việc tải quảng cáo banner tạm thời
-        // LoadBannerAd();
+        LoadAllAds();
+        LoadLastAdWatchedTime(); // Tải thời gian xem quảng cáo cuối cùng
+        CheckRewardButtonStatus(); // Kiểm tra trạng thái nút quảng cáo khi khởi tạo
+    }
+
+    public void LoadAllAds()
+    {
+        LoadAd(_androidRewardedAdUnitId);
+        LoadAd(_androidInterstitialAdUnitId);
+        LoadBannerAd();
+    }
+
+    private void LoadAd(string adUnitId)
+    {
+        Advertisement.Load(adUnitId, this);
     }
 
     public void ShowAd(Button clickedButton)
     {
-        // Xác định loại quảng cáo dựa trên tên của nút
         if (clickedButton.name.Contains("Rewarded"))
         {
-            _adUnitId = (Application.platform == RuntimePlatform.IPhonePlayer) ? _iOSRewardedAdUnitId : _androidRewardedAdUnitId;
-            Advertisement.Show(_adUnitId, this); // Hiện quảng cáo thưởng
+            _currentAdUnitId = (Application.platform == RuntimePlatform.IPhonePlayer) ? _iOSRewardedAdUnitId : _androidRewardedAdUnitId;
         }
         else if (clickedButton.name.Contains("Interstitial"))
         {
-            _adUnitId = (Application.platform == RuntimePlatform.IPhonePlayer) ? _iOSInterstitialAdUnitId : _androidInterstitialAdUnitId;
-            Advertisement.Show(_adUnitId, this); // Hiện quảng cáo xen kẽ
+            _currentAdUnitId = (Application.platform == RuntimePlatform.IPhonePlayer) ? _iOSInterstitialAdUnitId : _androidInterstitialAdUnitId;
+        }
+
+        Advertisement.Show(_currentAdUnitId, this);
+    }
+
+    public void ShowRewardedAd()
+    {
+        // Kiểm tra xem đã hết thời gian chờ chưa
+        if (DateTime.Now >= nextAvailableRewardTime)
+        {
+            _currentAdUnitId = (Application.platform == RuntimePlatform.IPhonePlayer) ? _iOSRewardedAdUnitId : _androidRewardedAdUnitId;
+            Advertisement.Show(_currentAdUnitId, this);
+        }
+        else
+        {
+            Debug.Log("Vui lòng chờ để xem quảng cáo thưởng tiếp theo.");
         }
     }
 
-    // Tải quảng cáo banner (tạm thời không gọi)
     public void LoadBannerAd()
     {
-        // Tạo đối tượng BannerLoadOptions
         BannerLoadOptions loadOptions = new BannerLoadOptions
         {
             loadCallback = () => Debug.Log("Banner loaded successfully."),
             errorCallback = (message) => Debug.Log("Banner failed to load: " + message)
         };
 
-        // Tải quảng cáo banner và hiển thị nó
-        Advertisement.Banner.Load("Banner_Ad_Unit_ID", loadOptions); // Thay "Banner_Ad_Unit_ID" bằng ID quảng cáo banner của bạn
-        Advertisement.Banner.Show("Banner_Ad_Unit_ID");
+        Advertisement.Banner.SetPosition(BannerPosition.BOTTOM_CENTER);
+        Advertisement.Banner.Load(_bannerAdUnitId, loadOptions);
+        Advertisement.Banner.Show(_bannerAdUnitId);
     }
 
     void OnDestroy()
     {
-        // Ẩn quảng cáo banner khi tắt game
         Advertisement.Banner.Hide();
     }
 
@@ -87,11 +120,85 @@ public class AdManager : MonoBehaviour, IUnityAdsLoadListener, IUnityAdsShowList
 
     public void OnUnityAdsShowComplete(string adUnitId, UnityAdsShowCompletionState showCompletionState)
     {
-        // Grant rewards if necessary for rewarded ads
-        if (showCompletionState.Equals(UnityAdsShowCompletionState.COMPLETED))
+        if (showCompletionState == UnityAdsShowCompletionState.COMPLETED && adUnitId == _currentAdUnitId)
         {
-            Debug.Log("Ad completed, grant reward.");
-            // Grant reward code here
+            Debug.Log("Ad completed, granting reward.");
+            GrantReward(); // Gọi hàm thưởng coin cho người chơi
+            nextAvailableRewardTime = DateTime.Now.Add(cooldownTime); // Thiết lập thời gian chờ
+            PlayerPrefs.SetString(lastAdWatchedKey, DateTime.Now.ToString()); // Lưu thời gian xem quảng cáo
+            PlayerPrefs.Save(); // Lưu PlayerPrefs
+            StartCoroutine(Countdown()); // Bắt đầu đếm ngược
+            CheckRewardButtonStatus(); // Kiểm tra lại trạng thái nút quảng cáo thưởng
         }
+        else if (showCompletionState == UnityAdsShowCompletionState.SKIPPED)
+        {
+            Debug.Log("Ad skipped, no reward granted.");
+        }
+
+        LoadAd(adUnitId); // Tải quảng cáo sau khi xem xong
+    }
+
+    private void GrantReward()
+    {
+        // Kiểm tra xem người chơi đã nhận coin từ quảng cáo chưa
+        if (ScoreCoin.instance != null && !PlayerPrefs.HasKey(adRewardClaimedKey))
+        {
+            ScoreCoin.instance.AddCoins(rewardAmount); // Thêm coin cho người chơi
+            Debug.Log("Người chơi nhận được " + rewardAmount + " coin.");
+
+            // Đánh dấu rằng người chơi đã nhận coin từ quảng cáo
+            PlayerPrefs.SetInt(adRewardClaimedKey, 1);
+            PlayerPrefs.Save(); // Lưu PlayerPrefs
+        }
+    }
+
+    private void LoadLastAdWatchedTime()
+    {
+        if (PlayerPrefs.HasKey(lastAdWatchedKey))
+        {
+            string lastAdWatchedTimeString = PlayerPrefs.GetString(lastAdWatchedKey);
+            nextAvailableRewardTime = DateTime.Parse(lastAdWatchedTimeString).Add(cooldownTime); // Thiết lập thời gian chờ từ PlayerPrefs
+
+            // Reset trạng thái nhận coin khi thời gian chờ đã hết
+            if (DateTime.Now >= nextAvailableRewardTime)
+            {
+                PlayerPrefs.DeleteKey(adRewardClaimedKey); // Xóa trạng thái đã nhận coin
+            }
+        }
+        else
+        {
+            nextAvailableRewardTime = DateTime.Now; // Nếu không có thời gian lưu, cho phép xem ngay
+        }
+    }
+
+    private void CheckRewardButtonStatus()
+    {
+        if (DateTime.Now < nextAvailableRewardTime)
+        {
+            rewardedAdButton.interactable = false; // Vô hiệu hóa nút nếu chưa đến thời gian
+            TimeSpan remainingTime = nextAvailableRewardTime - DateTime.Now;
+            rewardedAdButton.GetComponentInChildren<Text>().text = remainingTime.Minutes.ToString("D2") + ":" + remainingTime.Seconds.ToString("D2"); // Hiển thị thời gian còn lại
+        }
+        else
+        {
+            rewardedAdButton.interactable = true; // Kích hoạt nút nếu đã đến thời gian
+            rewardedAdButton.GetComponentInChildren<Text>().text = ""; // Không hiển thị chữ
+        }
+    }
+
+
+    private IEnumerator Countdown()
+    {
+        while (DateTime.Now < nextAvailableRewardTime)
+        {
+            CheckRewardButtonStatus(); // Cập nhật trạng thái nút
+            yield return new WaitForSeconds(1); // Đợi 1 giây trước khi lặp lại
+        }
+    }
+
+    void Update()
+    {
+        // Cập nhật trạng thái nút quảng cáo thưởng
+        CheckRewardButtonStatus();
     }
 }
