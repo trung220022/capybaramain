@@ -14,8 +14,12 @@ public class GameStartController : MonoBehaviour
     public GameObject parachute; // Tham chiếu đến cái dù
     public Text scoreText; // Text để hiển thị điểm hiện tại
 
+    public Button[] unlockableButtons; // Danh sách button có thể unlock
+
     void Start()
     {
+        LoadUnlockedButtons(); // Tải trạng thái button từ PlayerPrefs
+
         startButton.SetActive(true);
 
         foreach (var button in otherButtons)
@@ -24,11 +28,11 @@ public class GameStartController : MonoBehaviour
         }
 
         losePanel.SetActive(false);
-        replayButton.gameObject.SetActive(false); // Đảm bảo replayButton được ẩn
+        replayButton.gameObject.SetActive(false);
 
         if (parachute != null)
         {
-            parachute.SetActive(false); // Tắt cái dù
+            parachute.SetActive(false);
         }
 
         if (scoreText != null)
@@ -38,17 +42,17 @@ public class GameStartController : MonoBehaviour
 
         if (playerController != null)
         {
-            playerController.enabled = false; // Vô hiệu hóa điều khiển nhân vật trước khi bắt đầu trò chơi
+            playerController.enabled = false;
         }
 
         foreach (var obstacle in obstacles)
         {
-            obstacle.StopMovement(); // Đảm bảo chướng ngại vật không di chuyển trước khi bắt đầu
+            obstacle.StopMovement();
         }
 
         if (obstacleSpawner != null)
         {
-            obstacleSpawner.enabled = false; // Vô hiệu hóa quá trình sinh chướng ngại vật
+            obstacleSpawner.enabled = false;
         }
 
         replayButton.onClick.AddListener(OnReplayButtonPressed);
@@ -56,18 +60,16 @@ public class GameStartController : MonoBehaviour
 
     public void OnStartButtonPressed()
     {
-        // Kiểm tra nếu có bảng UI nào đang mở
         if (UIController.isPanelOpen)
         {
-            return; // Dừng việc bắt đầu trò chơi
+            return;
         }
 
-        // Nếu không có tab nào đang mở, tiếp tục bắt đầu trò chơi
         startButton.SetActive(false);
 
         foreach (var button in otherButtons)
         {
-            button.SetActive(false); // Ẩn tất cả các button khác khi trò chơi bắt đầu
+            button.SetActive(false);
         }
 
         if (scoreText != null)
@@ -77,29 +79,29 @@ public class GameStartController : MonoBehaviour
 
         if (playerController != null)
         {
-            playerController.enabled = true; // Kích hoạt điều khiển nhân vật
-            playerController.StartGame(); // Bắt đầu trò chơi và cho phép nhân vật di chuyển
+            playerController.enabled = true;
+            playerController.StartGame();
         }
 
         foreach (var obstacle in obstacles)
         {
-            obstacle.StartMovement(); // Bắt đầu di chuyển chướng ngại vật
+            obstacle.StartMovement();
         }
 
         if (obstacleSpawner != null)
         {
-            obstacleSpawner.enabled = true; // Kích hoạt quá trình sinh chướng ngại vật
+            obstacleSpawner.enabled = true;
         }
     }
 
     public void OnPlayerLose()
     {
         losePanel.SetActive(true);
-        replayButton.gameObject.SetActive(true); // Hiện nút chơi lại
+        replayButton.gameObject.SetActive(true);
 
         if (parachute != null)
         {
-            parachute.SetActive(true); // Bật cái dù
+            parachute.SetActive(true);
         }
 
         foreach (var button in otherButtons)
@@ -107,12 +109,12 @@ public class GameStartController : MonoBehaviour
             button.SetActive(false);
         }
 
-        playerController.enabled = false; // Vô hiệu hóa điều khiển nhân vật
+        playerController.enabled = false;
         foreach (var obstacle in obstacles)
         {
-            obstacle.StopMovement(); // Dừng di chuyển chướng ngại vật
+            obstacle.StopMovement();
         }
-        obstacleSpawner.enabled = false; // Vô hiệu hóa sinh chướng ngại vật
+        obstacleSpawner.enabled = false;
 
         Invoke("RestartGameAfterDelay", 5f);
     }
@@ -125,5 +127,22 @@ public class GameStartController : MonoBehaviour
     public void OnReplayButtonPressed()
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+    }
+
+    // ====== XỬ LÝ GIỮ TRẠNG THÁI BUTTON SAU KHI VÀO SHOP ======
+
+    void LoadUnlockedButtons()
+    {
+        for (int i = 0; i < unlockableButtons.Length; i++)
+        {
+            if (PlayerPrefs.GetInt("Button_" + i, 0) == 1)
+            {
+                unlockableButtons[i].gameObject.SetActive(true);
+            }
+            else
+            {
+                unlockableButtons[i].gameObject.SetActive(false);
+            }
+        }
     }
 }

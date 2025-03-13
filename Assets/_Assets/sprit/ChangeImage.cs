@@ -22,9 +22,6 @@ public class ChangeImage : MonoBehaviour
             PlayerPrefs.SetInt(outfitKey, index); // Lưu chỉ số trang phục
             PlayerPrefs.Save(); // Lưu lại các thay đổi
         }
-        else
-        { 
-            Debug.LogError("Skin chưa mở khóa!");
-        }
+       
     }
 }

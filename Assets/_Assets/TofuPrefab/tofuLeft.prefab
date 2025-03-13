@@ -42,7 +42,6 @@ BoxCollider2D:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1706728446960290674}
   m_Enabled: 1
-  serializedVersion: 3
   m_Density: 1
   m_Material: {fileID: 0}
   m_IncludeLayers:
@@ -66,8 +65,7 @@ BoxCollider2D:
     m_Bits: 4294967295
   m_IsTrigger: 1
   m_UsedByEffector: 0
-  m_CompositeOperation: 0
-  m_CompositeOrder: 0
+  m_UsedByComposite: 0
   m_Offset: {x: 0.5474287, y: -0.13065377}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
@@ -78,11 +76,12 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
+  serializedVersion: 2
   m_Size: {x: 0.111420155, y: 0.5291304}
   m_EdgeRadius: 0
 --- !u!50 &1149350845577005645
 Rigidbody2D:
-  serializedVersion: 5
+  serializedVersion: 4
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -93,8 +92,8 @@ Rigidbody2D:
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
   m_Mass: 1
-  m_LinearDamping: 0
-  m_AngularDamping: 0.05
+  m_LinearDrag: 0
+  m_AngularDrag: 0.05
   m_GravityScale: 1
   m_Material: {fileID: 0}
   m_IncludeLayers:
@@ -155,7 +154,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -11.33, y: 3.03, z: 0}
-  m_LocalScale: {x: 2.05, y: 2.12, z: 1}
+  m_LocalScale: {x: 1.8, y: 1.8, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 6395847395556847061}
@@ -180,9 +179,6 @@ SpriteRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 0
   m_RayTraceProcedural: 0
-  m_RayTracingAccelStructBuildFlagsOverride: 0
-  m_RayTracingAccelStructBuildFlags: 1
-  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -220,7 +216,7 @@ SpriteRenderer:
   m_SpriteSortPoint: 0
 --- !u!50 &1168874667583383373
 Rigidbody2D:
-  serializedVersion: 5
+  serializedVersion: 4
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -231,8 +227,8 @@ Rigidbody2D:
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
   m_Mass: 1
-  m_LinearDamping: 0
-  m_AngularDamping: 0.05
+  m_LinearDrag: 0
+  m_AngularDrag: 0.05
   m_GravityScale: 1
   m_Material: {fileID: 0}
   m_IncludeLayers:
@@ -253,7 +249,6 @@ BoxCollider2D:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5564407669830737285}
   m_Enabled: 1
-  serializedVersion: 3
   m_Density: 1
   m_Material: {fileID: 0}
   m_IncludeLayers:
@@ -277,8 +272,7 @@ BoxCollider2D:
     m_Bits: 4294967295
   m_IsTrigger: 0
   m_UsedByEffector: 0
-  m_CompositeOperation: 0
-  m_CompositeOrder: 0
+  m_UsedByComposite: 0
   m_Offset: {x: -0.009146333, y: -0.0817177}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
@@ -289,6 +283,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
+  serializedVersion: 2
   m_Size: {x: 1.2202365, y: 0.63403696}
   m_EdgeRadius: 0
 --- !u!114 &8584581773814075819
@@ -307,7 +302,7 @@ MonoBehaviour:
   leftBound: -5
   rightBound: -0.1
   minSpeed: 3
-  maxSpeed: 6
+  maxSpeed: 5
 --- !u!114 &6378035500593176184
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -325,18 +320,18 @@ MonoBehaviour:
   - {fileID: 2340096149892672656, guid: 6d147172e7916ef4d9d28056e312e283, type: 3}
   - {fileID: 471612775760486950, guid: 662e149050958e4409e824f65a445f86, type: 3}
   - {fileID: 4453354423488746497, guid: 6068ca92b28fe9846bc178dba2c0f920, type: 3}
-  spawnOffset: {x: -11.33, y: 0.88, z: 0}
+  spawnOffset: {x: -11.33, y: 0.66, z: 0}
   spawnCooldown: 3
   obstacleScales:
-  - {x: 1.3, y: 1.2, z: 0}
-  - {x: 0.6, y: 0.6, z: 0}
-  - {x: 0.6, y: 0.6, z: 0}
-  - {x: 0.6, y: 0.6, z: 0}
+  - {x: 1, y: 1, z: 0}
+  - {x: 0.5, y: 0.5, z: 0}
+  - {x: 0.5, y: 0.5, z: 0}
+  - {x: 0.5, y: 0.5, z: 0}
   spawnChances:
-  - 0.7
-  - 0.05
+  - 0.8
+  - 0.03
   - 0.2
-  - 0.05
+  - 0.03
 --- !u!1 &6108208306564645810
 GameObject:
   m_ObjectHideFlags: 0
@@ -371,7 +366,7 @@ Transform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!50 &1643911288926598176
 Rigidbody2D:
-  serializedVersion: 5
+  serializedVersion: 4
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -382,8 +377,8 @@ Rigidbody2D:
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
   m_Mass: 1
-  m_LinearDamping: 0
-  m_AngularDamping: 0.05
+  m_LinearDrag: 0
+  m_AngularDrag: 0.05
   m_GravityScale: 1
   m_Material: {fileID: 0}
   m_IncludeLayers:
@@ -446,9 +441,6 @@ SpriteRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 0
   m_RayTraceProcedural: 0
-  m_RayTracingAccelStructBuildFlagsOverride: 0
-  m_RayTracingAccelStructBuildFlags: 1
-  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:

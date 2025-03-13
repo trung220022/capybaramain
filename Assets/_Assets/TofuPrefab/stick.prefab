@@ -99,5 +99,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   rightSpeed: 0
   leftSpeed: 8
-  leftLimit: -5
+  leftLimit: -6
   rightLimit: -2.5
