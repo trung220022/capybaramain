@@ -5730,7 +5730,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 4343202725545229277, guid: 25dd2fd6a69ef5747a0ec5fb51c45f82, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 165df8225583e6a43838a5b6a7853fa9, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -12530,7 +12530,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1190029404
 RectTransform:
   m_ObjectHideFlags: 0
@@ -13662,7 +13662,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1282679465}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1316182886}
+        m_TargetAssemblyTypeName: AdManager, Assembly-CSharp
+        m_MethodName: ShowRewardedAd
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1282679465
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -24803,6 +24815,14 @@ PrefabInstance:
     - target: {fileID: 1168874667583383373, guid: 77e6720d3ec6fc44d89a97882d8b3063, type: 3}
       propertyPath: m_Simulated
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1196549398039433966, guid: 77e6720d3ec6fc44d89a97882d8b3063, type: 3}
+      propertyPath: audioManager
+      value: 
+      objectReference: {fileID: 139057082}
+    - target: {fileID: 1196549398039433966, guid: 77e6720d3ec6fc44d89a97882d8b3063, type: 3}
+      propertyPath: forceMagnitude
+      value: 7.5
       objectReference: {fileID: 0}
     - target: {fileID: 1196549398039433966, guid: 77e6720d3ec6fc44d89a97882d8b3063, type: 3}
       propertyPath: gameStartController
